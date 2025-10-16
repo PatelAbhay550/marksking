@@ -2,6 +2,80 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import argparse
+import time
+import random
+
+# Try to import advanced bypass utilities
+try:
+    from bypass_utils import make_advanced_request
+    ADVANCED_BYPASS_AVAILABLE = True
+    print("✓ Advanced bypass utilities loaded")
+except ImportError:
+    ADVANCED_BYPASS_AVAILABLE = False
+    print("⚠️ Advanced bypass utilities not available, using basic method")
+
+def make_request_with_retry(url, max_retries=3):
+    """
+    Make HTTP request with enhanced headers and retry logic to bypass restrictions.
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"'
+    }
+    
+    session = requests.Session()
+    session.headers.update(headers)
+    
+    for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                delay = random.uniform(1, 3)
+                print(f"Retrying in {delay:.1f} seconds... (attempt {attempt + 1})")
+                time.sleep(delay)
+            
+            print(f"Attempting to fetch URL (attempt {attempt + 1}): {url}")
+            response = session.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                print("✓ Successfully fetched content")
+                return response.text
+            elif response.status_code == 403:
+                print(f"✗ 403 Forbidden - Server blocking request (attempt {attempt + 1})")
+                if attempt < max_retries - 1:
+                    user_agents = [
+                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
+                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                    ]
+                    session.headers['User-Agent'] = random.choice(user_agents)
+                continue
+            else:
+                print(f"✗ HTTP {response.status_code}: {response.reason}")
+                response.raise_for_status()
+                
+        except requests.exceptions.Timeout:
+            print(f"✗ Timeout error (attempt {attempt + 1})")
+        except requests.exceptions.ConnectionError:
+            print(f"✗ Connection error (attempt {attempt + 1})")
+        except requests.RequestException as e:
+            print(f"✗ Request error (attempt {attempt + 1}): {e}")
+            
+        if attempt == max_retries - 1:
+            raise Exception(f"Failed to fetch URL after {max_retries} attempts. Server may be blocking requests.")
+    
+    return None
 
 def scrape_je_answer_key(source, is_file=False):
     """
@@ -29,10 +103,17 @@ def scrape_je_answer_key(source, is_file=False):
             return None
     else:
         try:
-            response = requests.get(source, headers={'User-Agent': 'Mozilla/5.0'})
-            response.raise_for_status()
-            html_content = response.text
-        except requests.RequestException as e:
+            # Try advanced bypass first if available
+            if ADVANCED_BYPASS_AVAILABLE:
+                print("🚀 Using advanced bypass techniques...")
+                html_content = make_advanced_request(source)
+            else:
+                print("📡 Using basic bypass method...")
+                html_content = make_request_with_retry(source)
+                
+            if not html_content:
+                return None
+        except Exception as e:
             print(f"Error fetching URL: {e}")
             return None
 
