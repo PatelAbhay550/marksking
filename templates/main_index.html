@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}SSC Answer Key Calculators{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="text-center mb-5">
+                <h1 class="display-4 text-primary">SSC Answer Key Calculators</h1>
+                <p class="lead text-muted">Calculate your scores for various SSC examinations</p>
+            </div>
+
+            <div class="row">
+                <!-- MTS Calculator Card -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-calculator fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">SSC MTS Calculator</h5>
+                            <p class="card-text">Calculate your score for SSC Multi Tasking Staff (MTS) examination.</p>
+                            <a href="{{ url_for('calculate_mts_score') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Calculate MTS Score
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JE Calculator Card -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-cogs fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">SSC JE Calculator</h5>
+                            <p class="card-text">Calculate your score for SSC Junior Engineer (JE) examination.</p>
+                            <a href="{{ url_for('calculate_je_score') }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Calculate JE Score
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHSL Calculator Card -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-graduation-cap fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">SSC CHSL Calculator</h5>
+                            <p class="card-text">Calculate your score for SSC Combined Higher Secondary Level (CHSL) examination.</p>
+                            <a href="{{ url_for('calculate_chsl_score') }}" class="btn btn-warning btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Calculate CHSL Score
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="text-center mb-4">Features</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-link fa-2x text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">URL Support</h6>
+                                    <p class="mb-0 text-muted">Submit answer key URLs directly</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file-upload fa-2x text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">File Upload</h6>
+                                    <p class="mb-0 text-muted">Upload HTML answer key files</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-bar fa-2x text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Detailed Analysis</h6>
+                                    <p class="mb-0 text-muted">Section-wise score breakdown</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tachometer-alt fa-2x text-info me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">Fast Processing</h6>
+                                    <p class="mb-0 text-muted">Quick and accurate calculations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>How to Use</h5>
+                        <ol class="mb-0">
+                            <li>Select the appropriate calculator for your exam</li>
+                            <li>Either provide the answer key URL or upload the HTML file</li>
+                            <li>Click calculate to get your detailed score analysis</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
