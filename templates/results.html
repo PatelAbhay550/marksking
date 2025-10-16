@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Score - MarksKing{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-lg">
+  <div class="card-header bg-success text-white text-center py-3">
+    <h4 class="mb-0">Your Score Report</h4>
+  </div>
+  <div class="card-body p-4 p-md-5">
+
+    <div class="text-center p-4 mb-4 rounded" style="background-color: #e9f5e9;">
+        <h6 class="text-secondary text-uppercase">Total Marks</h6>
+        <h1 class="display-3 fw-bold text-success">{{ data.exam_summary.total_marks }}</h1>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-person-badge-fill me-2"></i>Candidate Details
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Name:</strong>
+                <span>{{ data.candidate_info.cand_name }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Roll Number:</strong>
+                <span>{{ data.candidate_info.roll_no }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Exam Date:</strong>
+                <span>{{ data.candidate_info.exam_date }} ({{ data.candidate_info.exam_time }})</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Subject:</strong>
+                <span>{{ data.candidate_info.subject }}</span>
+            </li>
+        </ul>
+    </div>
+    
+    <h5 class="mb-3"><i class="bi bi-card-list me-2"></i>Section-wise Breakdown</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start">Section Name</th>
+                    <th>Attempted</th>
+                    <th class="text-success">Right</th>
+                    <th class="text-danger">Wrong</th>
+                    <th class="text-info">Bonus</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for section in data.section_details %}
+                <tr>
+                    <td class="text-start fw-bold">{{ section.section_name }}</td>
+                    <td>{{ section.attempted }} / {{ section.total_questions }}</td>
+                    <td class="text-success fw-bold">{{ section.right }}</td>
+                    <td class="text-danger fw-bold">{{ section.wrong }}</td>
+                    <td class="text-info fw-bold">{{ section.bonus }}</td>
+                    <td class="fw-bolder">{{ section.marks_in_section }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+         <a href="/" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i>Check Another Key</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

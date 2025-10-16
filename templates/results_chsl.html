@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Your SSC CHSL Score - MarksKing{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-lg">
+  <div class="card-header bg-success text-white text-center py-3">
+    <h4 class="mb-0">SSC CHSL Tier-I Score Report</h4>
+  </div>
+  <div class="card-body p-4 p-md-5">
+
+    <!-- Total Score Hero Section -->
+    <div class="text-center p-4 mb-4 rounded" style="background-color: #e9f5e9;">
+        <h6 class="text-secondary text-uppercase">Total Marks (Out of 200)</h6>
+        <h1 class="display-3 fw-bold text-success">{{ data.exam_summary.total_marks }}</h1>
+    </div>
+
+    <!-- Candidate Details Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-person-badge-fill me-2"></i>Candidate Details
+        </div>
+        <ul class="list-group list-group-flush">
+            {% if data.candidate_info.cand_name %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Name:</strong>
+                <span>{{ data.candidate_info.cand_name }}</span>
+            </li>
+            {% endif %}
+            {% if data.candidate_info.roll_no %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Roll Number:</strong>
+                <span>{{ data.candidate_info.roll_no }}</span>
+            </li>
+            {% endif %}
+             {% if data.candidate_info.exam_date %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <strong>Exam Date:</strong>
+                <span>{{ data.candidate_info.exam_date }} ({{ data.candidate_info.exam_time }})</span>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <!-- Section-wise Breakdown -->
+    <h5 class="mb-3"><i class="bi bi-card-list me-2"></i>Section-wise Breakdown</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start">Section Name</th>
+                    <th class="text-success">Right <span class="text-muted small">(+2)</span></th>
+                    <th class="text-danger">Wrong <span class="text-muted small">(-0.5)</span></th>
+                    <th class="text-secondary">Skipped</th>
+                    <th class="text-info">Bonus</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for section in data.section_details %}
+                <tr>
+                    <td class="text-start fw-bold">{{ section.section_name }}</td>
+                    <td class="text-success fw-bold">{{ section.right }}</td>
+                    <td class="text-danger fw-bold">{{ section.wrong }}</td>
+                    <td class="text-secondary fw-bold">{{ section.not_attempted }}</td>
+                    <td class="text-info fw-bold">{{ section.bonus }}</td>
+                    <td class="fw-bolder">{{ section.marks_in_section }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+         <a href="/chsl" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i>Check Another CHSL Key</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

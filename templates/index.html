@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Exam Score Calculators - MarksKing{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+  <h2 class="display-6">Welcome to MarksKing</h2>
+  <p class="lead text-muted">Your one-stop destination for accurate exam score calculation. Select an exam below to begin.</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">SSC MTS Marks Calculator</h5>
+        <p class="card-text text-muted">Calculate your score for the Multi-Tasking (Non-Technical) Staff Examination.</p>
+        <div class="mt-auto">
+          <a href="/mts" class="btn btn-primary w-100">
+            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">SSC JE Marks Calculator</h5>
+        <p class="card-text text-muted">Calculate your score for the Junior Engineer (Civil, Mechanical, & Electrical) Examination.</p>
+        <div class="mt-auto">
+          <a href="/ssc-je" class="btn btn-primary w-100">
+            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SSC CHSL Calculator Card -->
+  <div class="col-md-6">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">SSC CHSL (10+2) 2025 Marks Calculator</h5>
+        <p class="card-text text-muted">For Combined Higher Secondary Level Examination. Supports both TCS & Eduquity keys.</p>
+        <div class="mt-auto">
+          <a href="/chsl" class="btn btn-primary w-100">
+            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  </div>
+{% endblock %}
