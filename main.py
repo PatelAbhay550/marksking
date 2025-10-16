@@ -3,11 +3,26 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 import tempfile
+import traceback
 
 # Import both scraper functions, renaming the first one for clarity
-from scraper import scrape_answer_key as scrape_mts_key
-from scraper_je import scrape_je_answer_key
-from scraper_chsl import scrape_chsl_answer_key
+try:
+    from scraper import scrape_answer_key as scrape_mts_key
+    print("✓ MTS scraper imported successfully")
+except Exception as e:
+    print(f"✗ Error importing MTS scraper: {e}")
+
+try:
+    from scraper_je import scrape_je_answer_key
+    print("✓ JE scraper imported successfully")
+except Exception as e:
+    print(f"✗ Error importing JE scraper: {e}")
+
+try:
+    from scraper_chsl import scrape_chsl_answer_key
+    print("✓ CHSL scraper imported successfully")
+except Exception as e:
+    print(f"✗ Error importing CHSL scraper: {e}")
 
 # --- Configuration ---
 ALLOWED_EXTENSIONS = {'html', 'htm'}
@@ -25,13 +40,13 @@ def allowed_file(filename):
 @app.route('/test')
 def test():
     """Simple test route to verify the app is working."""
-    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["Homepage: /", "MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
+    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
 
 # --- ROOT ROUTE (Landing Page) ---
 @app.route('/', methods=['GET'])
 def home():
     """Landing page with links to all calculators."""
-    return render_template('index.html')
+    return render_template('base.html')
 
 # --- SSC MTS ROUTE ---
 @app.route('/mts', methods=['GET', 'POST'])
@@ -74,114 +89,133 @@ def calculate_mts_score():
                 flash('Could not process the MTS answer key. The URL may be invalid or the HTML structure might not be supported.', 'danger')
                 return redirect(request.url)
                 
-        return render_template('mts_index.html')
+        return render_template('index.html')
     except Exception as e:
         print(f"Error in MTS route: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         flash('An error occurred while processing your request.', 'danger')
-        return render_template('mts_index.html')
+        return render_template('index.html')
 
 # --- SSC JE ROUTE (Fixed and Fully Implemented) ---
 @app.route('/ssc-je', methods=['GET', 'POST'])
 def calculate_je_score():
-    if request.method == 'POST':
-        result = None
-        source = None
-        is_file = False
-        ans_key_url = request.form.get('ans_key_url')
-        file = request.files.get('ans_key_file')
-
-        if ans_key_url:
-            # --- Process URL ---
-            print(f"Processing JE URL: {ans_key_url}")
-            source = ans_key_url
+    try:
+        if request.method == 'POST':
+            result = None
+            source = None
             is_file = False
+            ans_key_url = request.form.get('ans_key_url')
+            file = request.files.get('ans_key_file')
 
-        elif file and file.filename != '':
-            # --- Process File ---
-            if allowed_file(file.filename):
-                # Use temporary file instead of uploads directory
-                with tempfile.NamedTemporaryFile(mode='w+', suffix='.html', delete=False, encoding='utf-8') as temp_file:
-                    content = file.read().decode('utf-8')
-                    temp_file.write(content)
-                    filepath = temp_file.name
-                
-                print(f"Processing JE file: {filepath}")
-                source = filepath
-                is_file = True
+            if ans_key_url:
+                # --- Process URL ---
+                print(f"Processing JE URL: {ans_key_url}")
+                source = ans_key_url
+                is_file = False
+
+            elif file and file.filename != '':
+                # --- Process File ---
+                if allowed_file(file.filename):
+                    # Use temporary file instead of uploads directory
+                    with tempfile.NamedTemporaryFile(mode='w+', suffix='.html', delete=False, encoding='utf-8') as temp_file:
+                        content = file.read().decode('utf-8')
+                        temp_file.write(content)
+                        filepath = temp_file.name
+                    
+                    print(f"Processing JE file: {filepath}")
+                    source = filepath
+                    is_file = True
+                else:
+                    flash('Invalid file type. Please upload an HTML file.', 'danger')
+                    return redirect(request.url)
             else:
-                flash('Invalid file type. Please upload an HTML file.', 'danger')
+                flash('Please provide a URL or upload a file.', 'warning')
                 return redirect(request.url)
-        else:
-            flash('Please provide a URL or upload a file.', 'warning')
-            return redirect(request.url)
-        
-        # --- Call the specific JE scraper ---
-        result = scrape_je_answer_key(source=source, is_file=is_file)
-
-        # --- Clean up file if it exists ---
-        if is_file and source and os.path.exists(source):
-            try:
-                os.remove(source)
-            except:
-                pass
-
-        # --- Handle Result ---
-        if result:
-            # Render the specific JE results page
-            return render_template('results_je.html', data=result)
-        else:
-            flash('Could not process the JE answer key. The URL may be invalid or the HTML structure might not be supported.', 'danger')
-            return redirect(request.url)
             
-    # For GET request, show the JE form
-    return render_template('je_index.html')
+            # --- Call the specific JE scraper ---
+            print(f"Calling JE scraper with source: {source}, is_file: {is_file}")
+            result = scrape_je_answer_key(source=source, is_file=is_file)
+            print(f"JE scraper result: {result is not None}")
+
+            # --- Clean up file if it exists ---
+            if is_file and source and os.path.exists(source):
+                try:
+                    os.remove(source)
+                except:
+                    pass
+
+            # --- Handle Result ---
+            if result:
+                # Render the specific JE results page
+                return render_template('results_je.html', data=result)
+            else:
+                flash('Could not process the JE answer key. The URL may be invalid or the HTML structure might not be supported.', 'danger')
+                return redirect(request.url)
+                
+        # For GET request, show the JE form
+        return render_template('je_index.html')
+    except Exception as e:
+        print(f"Error in JE route: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        flash('An error occurred while processing your request.', 'danger')
+        return render_template('je_index.html')
 
 # --- NEW: SSC CHSL Calculator Route ---
 @app.route('/chsl', methods=['GET', 'POST'])
 def calculate_chsl_score():
     """Handles logic for the universal SSC CHSL calculator."""
-    if request.method == 'POST':
-        result = None
-        source = None
-        is_file = False
-        ans_key_url = request.form.get('ans_key_url')
-        file = request.files.get('ans_key_file')
+    try:
+        if request.method == 'POST':
+            result = None
+            source = None
+            is_file = False
+            ans_key_url = request.form.get('ans_key_url')
+            file = request.files.get('ans_key_file')
 
-        if ans_key_url:
-            source, is_file = ans_key_url, False
-        elif file and file.filename != '':
-            if allowed_file(file.filename):
-                # Use temporary file instead of uploads directory
-                with tempfile.NamedTemporaryFile(mode='w+', suffix='.html', delete=False, encoding='utf-8') as temp_file:
-                    content = file.read().decode('utf-8')
-                    temp_file.write(content)
-                    filepath = temp_file.name
-                source, is_file = filepath, True
+            if ans_key_url:
+                print(f"Processing CHSL URL: {ans_key_url}")
+                source, is_file = ans_key_url, False
+            elif file and file.filename != '':
+                if allowed_file(file.filename):
+                    # Use temporary file instead of uploads directory
+                    with tempfile.NamedTemporaryFile(mode='w+', suffix='.html', delete=False, encoding='utf-8') as temp_file:
+                        content = file.read().decode('utf-8')
+                        temp_file.write(content)
+                        filepath = temp_file.name
+                    print(f"Processing CHSL file: {filepath}")
+                    source, is_file = filepath, True
+                else:
+                    flash('Invalid file type. Please upload an HTML file.', 'danger')
+                    return redirect(url_for('calculate_chsl_score'))
             else:
-                flash('Invalid file type. Please upload an HTML file.', 'danger')
+                flash('Please provide a URL or upload a file.', 'warning')
                 return redirect(url_for('calculate_chsl_score'))
-        else:
-            flash('Please provide a URL or upload a file.', 'warning')
-            return redirect(url_for('calculate_chsl_score'))
-        
-        # Call the specific CHSL scraper
-        result = scrape_chsl_answer_key(source=source, is_file=is_file)
-
-        if is_file and source and os.path.exists(source):
-            try:
-                os.remove(source)
-            except:
-                pass
-
-        if result:
-            # Render the specific CHSL results page
-            return render_template('results_chsl.html', data=result)
-        else:
-            flash('Could not process the CHSL answer key. The URL may be invalid or the format is not supported.', 'danger')
-            return redirect(url_for('calculate_chsl_score'))
             
-    # For GET request, show the CHSL form
-    return render_template('chsl_index.html')
+            # Call the specific CHSL scraper
+            print(f"Calling CHSL scraper with source: {source}, is_file: {is_file}")
+            result = scrape_chsl_answer_key(source=source, is_file=is_file)
+            print(f"CHSL scraper result: {result is not None}")
+
+            if is_file and source and os.path.exists(source):
+                try:
+                    os.remove(source)
+                except:
+                    pass
+
+            if result:
+                # Render the specific CHSL results page
+                return render_template('results_chsl.html', data=result)
+            else:
+                flash('Could not process the CHSL answer key. The URL may be invalid or the format is not supported.', 'danger')
+                return redirect(url_for('calculate_chsl_score'))
+                
+        # For GET request, show the CHSL form
+        return render_template('chsl_index.html')
+    except Exception as e:
+        print(f"Error in CHSL route: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        flash('An error occurred while processing your request.', 'danger')
+        return render_template('chsl_index.html')
 
 if __name__ == '__main__':
     app.run()
