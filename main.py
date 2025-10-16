@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, make_response
 from werkzeug.utils import secure_filename
 import os
 import uuid
@@ -41,6 +41,39 @@ def allowed_file(filename):
 def test():
     """Simple test route to verify the app is working."""
     return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["Home: /", "MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
+
+# --- SITEMAP ROUTE ---
+@app.route('/sitemap.xml')
+def sitemap():
+    """Generate XML sitemap for SEO"""
+    try:
+        from sitemap_generator import generate_sitemap
+        xml_content = generate_sitemap()
+        
+        response = make_response(xml_content)
+        response.headers['Content-Type'] = 'application/xml'
+        return response
+    except Exception as e:
+        print(f"Error generating sitemap: {e}")
+        return "Sitemap generation failed", 500
+
+# --- ROBOTS.TXT ROUTE ---
+@app.route('/robots.txt')
+def robots():
+    """Generate robots.txt for SEO"""
+    robots_content = """User-agent: *
+Allow: /
+Allow: /mts
+Allow: /ssc-je
+Allow: /chsl
+Sitemap: https://marksking.vercel.app/sitemap.xml
+
+# SSC Answer Key Calculator
+# Professional tools for government job preparation"""
+    
+    response = make_response(robots_content)
+    response.headers['Content-Type'] = 'text/plain'
+    return response
 
 # --- ROOT ROUTE (Landing Page) ---
 @app.route('/', methods=['GET'])
@@ -217,6 +250,17 @@ def calculate_chsl_score():
         print(f"Traceback: {traceback.format_exc()}")
         flash('An error occurred while processing your request.', 'danger')
         return render_template('chsl_index.html')
+
+# --- ERROR HANDLERS ---
+@app.errorhandler(404)
+def page_not_found(error):
+    """Handle 404 errors with custom page"""
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    """Handle 500 errors gracefully"""
+    return render_template('404.html'), 500
 
 if __name__ == '__main__':
     app.run()

@@ -3,38 +3,172 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}MarksKing{% endblock %}</title>
+    <title>{% block title %}SSC Answer Key Calculator - MarksKing{% endblock %}</title>
     
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block description %}Professional SSC answer key calculator for MTS, JE, and CHSL exams. Calculate your scores accurately with official answer keys from SSC.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}SSC answer key, MTS calculator, JE calculator, CHSL calculator, SSC score calculator, government job preparation{% endblock %}">
+    <meta name="author" content="MarksKing">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}SSC Answer Key Calculator - MarksKing{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Calculate your SSC exam scores with our professional answer key calculator. Supports MTS, JE, and CHSL examinations.{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "MarksKing - SSC Answer Key Calculator",
+      "description": "Professional calculator for SSC examinations including MTS, JE, and CHSL. Calculate your scores accurately with official answer keys.",
+      "url": "https://marksking.vercel.app",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "MarksKing"
+      }
+    }
+    </script>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #64748b;
+        --success-color: #059669;
+        --warning-color: #d97706;
+        --danger-color: #dc2626;
+        --light-bg: #f8fafc;
+        --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+      
       body {
-        background-color: #f0f2f5;
+        background-color: var(--light-bg);
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
       }
-      .main-container {
-        max-width: 800px;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
+      
+      .navbar {
+        background-color: white !important;
+        box-shadow: var(--card-shadow);
+        border-bottom: 1px solid #e2e8f0;
       }
+      
       .navbar-brand {
-        font-weight: 600;
+        font-weight: 700;
+        color: var(--primary-color) !important;
+        font-size: 1.5rem;
       }
+      
+      .main-container {
+        max-width: 1200px;
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+      }
+      
+      .card {
+        border: none;
+        box-shadow: var(--card-shadow);
+        border-radius: 12px;
+      }
+      
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 0.625rem 1.25rem;
+      }
+      
+      .btn-primary:hover {
+        background-color: #1d4ed8;
+        border-color: #1d4ed8;
+      }
+      
+      .form-control {
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        padding: 0.625rem 1rem;
+      }
+      
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+      }
+      
+      .alert {
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+      
       .footer {
-        font-size: 0.9em;
-        color: #6c757d;
+        background-color: white;
+        color: var(--secondary-color);
+        font-size: 0.875rem;
+        padding: 2rem 0;
+        margin-top: 3rem;
+        border-top: 1px solid #e2e8f0;
+      }
+      
+      .text-primary {
+        color: var(--primary-color) !important;
+      }
+      
+      .bg-primary {
+        background-color: var(--primary-color) !important;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+        color: #1e293b;
+      }
+      
+      .lead {
+        font-size: 1.125rem;
+        font-weight: 400;
       }
     </style>
   </head>
   <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
-        <a class="navbar-brand" href="/">
-          <i class="bi bi-bar-chart-line-fill"></i>
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="bi bi-calculator me-2"></i>
           MarksKing
         </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/mts">MTS Calculator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/ssc-je">JE Calculator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/chsl">CHSL Calculator</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
 
@@ -42,8 +176,34 @@
       {% block content %}{% endblock %}
     </div>
 
-    <footer class="text-center mt-4 pb-4 footer">
-      <p>&copy; 2025 MarksKing. All Rights Reserved.</p>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8">
+            <h6 class="mb-3">MarksKing - SSC Answer Key Calculator</h6>
+            <p class="mb-2">Professional calculator for SSC examinations. Calculate your scores accurately with official answer keys.</p>
+            <p class="mb-0">Built for candidates preparing for government jobs and competitive examinations.</p>
+          </div>
+          <div class="col-md-4">
+            <h6 class="mb-3">Quick Links</h6>
+            <ul class="list-unstyled">
+              <li><a href="/" class="text-decoration-none">Home</a></li>
+              <li><a href="/mts" class="text-decoration-none">MTS Calculator</a></li>
+              <li><a href="/ssc-je" class="text-decoration-none">JE Calculator</a></li>
+              <li><a href="/chsl" class="text-decoration-none">CHSL Calculator</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <p class="mb-0">&copy; 2025 MarksKing. All rights reserved.</p>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <small>Made for competitive exam aspirants</small>
+          </div>
+        </div>
+      </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

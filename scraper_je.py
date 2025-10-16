@@ -5,6 +5,15 @@ import argparse
 import time
 import random
 
+# Try to import proxy-only utilities
+try:
+    from proxy_only import make_proxy_only_request
+    PROXY_ONLY_AVAILABLE = True
+    print("✓ Proxy-only utilities loaded")
+except ImportError:
+    PROXY_ONLY_AVAILABLE = False
+    print("⚠️ Proxy-only utilities not available")
+
 # Try to import advanced bypass utilities
 try:
     from bypass_utils import make_advanced_request
@@ -103,10 +112,21 @@ def scrape_je_answer_key(source, is_file=False):
             return None
     else:
         try:
-            # Try advanced bypass first if available
-            if ADVANCED_BYPASS_AVAILABLE:
-                print("🚀 Using advanced bypass techniques...")
-                html_content = make_advanced_request(source)
+            # Use proxy-only method for maximum reliability
+            if PROXY_ONLY_AVAILABLE:
+                print("🌐 Using proxy-only method...")
+                html_content = make_proxy_only_request(source)
+            elif ADVANCED_BYPASS_AVAILABLE:
+                print("🔄 Using advanced bypass with proxy priority...")
+                from bypass_utils import SSCBypassManager
+                bypass_manager = SSCBypassManager()
+                html_content = bypass_manager.try_proxy_methods(source)
+                if html_content and html_content.status_code == 200:
+                    html_content = html_content.text
+                    print("✅ Success: Proxy method")
+                else:
+                    print("📡 Proxy methods failed, trying advanced bypass...")
+                    html_content = make_advanced_request(source)
             else:
                 print("📡 Using basic bypass method...")
                 html_content = make_request_with_retry(source)

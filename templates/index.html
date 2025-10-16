@@ -1,55 +1,101 @@
 {% extends 'base.html' %}
 
-{% block title %}Exam Score Calculators - MarksKing{% endblock %}
+{% block title %}SSC Exam Calculators - Professional Score Calculation Tools | MarksKing{% endblock %}
+
+{% block description %}Professional calculators for SSC examinations including MTS, JE, and CHSL. Calculate your exam scores accurately with official answer keys.{% endblock %}
 
 {% block content %}
 <div class="text-center mb-5">
-  <h2 class="display-6">Welcome to MarksKing</h2>
-  <p class="lead text-muted">Your one-stop destination for accurate exam score calculation. Select an exam below to begin.</p>
+  <h2 class="display-6 fw-bold">SSC Examination Calculators</h2>
+  <p class="lead text-muted">Professional tools for accurate score calculation in government competitive examinations</p>
 </div>
 
 <div class="row g-4">
-  <div class="col-md-6">
-    <div class="card h-100 shadow-sm">
+  <!-- MTS Calculator -->
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
       <div class="card-body d-flex flex-column">
-        <h5 class="card-title">SSC MTS Marks Calculator</h5>
-        <p class="card-text text-muted">Calculate your score for the Multi-Tasking (Non-Technical) Staff Examination.</p>
+        <div class="text-center mb-3">
+          <i class="bi bi-file-earmark-text text-primary" style="font-size: 3rem;"></i>
+        </div>
+        <h5 class="card-title text-center">SSC MTS Calculator</h5>
+        <p class="card-text text-muted">Calculate your Multi-Tasking (Non-Technical) Staff examination scores with precise marking scheme implementation.</p>
         <div class="mt-auto">
-          <a href="/mts" class="btn btn-primary w-100">
-            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          <a href="/mts" class="btn btn-primary w-100 btn-lg">
+            Calculate MTS Score <i class="bi bi-arrow-right-circle ms-2"></i>
           </a>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-md-6">
-    <div class="card h-100 shadow-sm">
+  <!-- JE Calculator -->
+  <div class="col-lg-4 col-md-6">
+    <div class="card h-100">
       <div class="card-body d-flex flex-column">
-        <h5 class="card-title">SSC JE Marks Calculator</h5>
-        <p class="card-text text-muted">Calculate your score for the Junior Engineer (Civil, Mechanical, & Electrical) Examination.</p>
+        <div class="text-center mb-3">
+          <i class="bi bi-gear text-success" style="font-size: 3rem;"></i>
+        </div>
+        <h5 class="card-title text-center">SSC JE Calculator</h5>
+        <p class="card-text text-muted">Junior Engineer examination calculator supporting Civil, Mechanical, and Electrical engineering streams.</p>
         <div class="mt-auto">
-          <a href="/ssc-je" class="btn btn-primary w-100">
-            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          <a href="/ssc-je" class="btn btn-success w-100 btn-lg">
+            Calculate JE Score <i class="bi bi-arrow-right-circle ms-2"></i>
           </a>
         </div>
       </div>
     </div>
   </div>
-  <!-- SSC CHSL Calculator Card -->
-  <div class="col-md-6">
-    <div class="card h-100 shadow-sm">
+
+  <!-- CHSL Calculator -->
+  <div class="col-lg-4 col-md-6 mx-auto">
+    <div class="card h-100">
       <div class="card-body d-flex flex-column">
-        <h5 class="card-title">SSC CHSL (10+2) 2025 Marks Calculator</h5>
-        <p class="card-text text-muted">For Combined Higher Secondary Level Examination. Supports both TCS & Eduquity keys.</p>
+        <div class="text-center mb-3">
+          <i class="bi bi-mortarboard text-warning" style="font-size: 3rem;"></i>
+        </div>
+        <h5 class="card-title text-center">SSC CHSL Calculator</h5>
+        <p class="card-text text-muted">Combined Higher Secondary Level examination calculator supporting both TCS and Eduquity answer key formats.</p>
         <div class="mt-auto">
-          <a href="/chsl" class="btn btn-primary w-100">
-            Go to Calculator <i class="bi bi-arrow-right-circle-fill"></i>
+          <a href="/chsl" class="btn btn-warning w-100 btn-lg">
+            Calculate CHSL Score <i class="bi bi-arrow-right-circle ms-2"></i>
           </a>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
+
+<!-- Additional Information -->
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title text-center mb-4">Why Choose Our Calculators?</h4>
+        <div class="row">
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-shield-check text-success fs-1"></i>
+            <h6 class="mt-2">Accurate Results</h6>
+            <p class="text-muted small">Official SSC marking schemes implemented</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-lightning-charge text-warning fs-1"></i>
+            <h6 class="mt-2">Fast Processing</h6>
+            <p class="text-muted small">Quick calculation with instant results</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-file-earmark-arrow-up text-info fs-1"></i>
+            <h6 class="mt-2">Multiple Formats</h6>
+            <p class="text-muted small">Supports URLs and file uploads</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-graph-up text-primary fs-1"></i>
+            <h6 class="mt-2">Detailed Analysis</h6>
+            <p class="text-muted small">Section-wise score breakdown</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 {% endblock %}

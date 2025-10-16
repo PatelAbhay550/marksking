@@ -1,33 +1,144 @@
 {% extends 'base.html' %}
 
-{% block title %}SSC CHSL Score Calculator - MarksKing{% endblock %}
+{% block title %}SSC CHSL Score Calculator - Combined Higher Secondary Level | MarksKing{% endblock %}
+
+{% block description %}Calculate your SSC CHSL (Combined Higher Secondary Level) examination scores. Supports both TCS and Eduquity answer key formats with accurate marking schemes.{% endblock %}
+
+{% block keywords %}SSC CHSL calculator, CHSL marks calculator, Combined Higher Secondary Level score, SSC CHSL answer key, 10+2 level calculator{% endblock %}
 
 {% block content %}
-<div class="card border-0 shadow-lg">
-  <div class="card-header bg-primary text-white text-center py-3">
-    <h4 class="mb-0">SSC CHSL (10+2) Answer Key Calculator</h4>
-  </div>
-  <div class="card-body p-4 p-md-5">
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} d-flex align-items-center" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <div>{{ message }}</div>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <div class="alert alert-info small">
-      This universal calculator automatically detects and supports answer keys from both TCS (digialm) and Eduquity (ssccbt).
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h1 class="display-6 fw-bold">SSC CHSL Score Calculator</h1>
+      <p class="lead text-muted">Combined Higher Secondary Level examination score calculator</p>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+          <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">CHSL Calculator</li>
+        </ol>
+      </nav>
     </div>
 
-    <form method="POST" action="/chsl" enctype="multipart/form-data">
-      
-      <!-- URL Input -->
-      <label for="ans_key_url" class="form-label fw-bold">1. Paste Answer Key URL</label>
+    <!-- Calculator Card -->
+    <div class="card">
+      <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0 d-flex align-items-center">
+          <i class="bi bi-mortarboard me-2"></i>
+          SSC CHSL Answer Key Processor
+        </h5>
+      </div>
+      <div class="card-body">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="alert alert-info d-flex align-items-start">
+          <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+          <div>
+            <strong>Universal Calculator:</strong> Automatically detects and supports answer keys from both TCS (DigiExam) and Eduquity platforms.
+          </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+          <!-- URL Option -->
+          <div class="mb-4">
+            <label for="ans_key_url" class="form-label fw-semibold">
+              <i class="bi bi-link-45deg text-warning me-2"></i>
+              Option 1: Answer Key URL
+            </label>
+            <input type="url" class="form-control form-control-lg" id="ans_key_url" name="ans_key_url" 
+                   placeholder="https://ssc.digialm.com/per/... or https://ssccbt.com/..." />
+            <div class="form-text">Enter the direct URL to the SSC CHSL answer key from official sources</div>
+          </div>
+
+          <!-- Divider -->
+          <div class="text-center my-4">
+            <span class="badge bg-light text-dark border px-3 py-2">OR</span>
+          </div>
+
+          <!-- File Option -->
+          <div class="mb-4">
+            <label for="ans_key_file" class="form-label fw-semibold">
+              <i class="bi bi-file-earmark-arrow-up text-warning me-2"></i>
+              Option 2: Upload Answer Key File
+            </label>
+            <input type="file" class="form-control form-control-lg" id="ans_key_file" name="ans_key_file" 
+                   accept=".html,.htm" />
+            <div class="form-text">Upload the HTML file saved from the SSC CHSL answer key page</div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-warning btn-lg py-3 text-dark fw-semibold">
+              <i class="bi bi-calculator me-2"></i>
+              Calculate CHSL Score
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Information Cards -->
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h6 class="card-title">
+              <i class="bi bi-check-circle text-success me-2"></i>
+              Supported Formats
+            </h6>
+            <ul class="list-unstyled mb-0 small">
+              <li class="mb-1">• TCS (DigiExam) format</li>
+              <li class="mb-1">• Eduquity (SSCCBT) format</li>
+              <li class="mb-1">• Automatic format detection</li>
+              <li>• All CHSL exam sessions</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h6 class="card-title">
+              <i class="bi bi-graph-up text-info me-2"></i>
+              Score Analysis
+            </h6>
+            <ul class="list-unstyled mb-0 small">
+              <li class="mb-1">• Section-wise breakdown</li>
+              <li class="mb-1">• Correct answer count</li>
+              <li class="mb-1">• Negative marking calculation</li>
+              <li>• Total score with accuracy</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Information -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <h6 class="card-title">About SSC CHSL Examination</h6>
+        <p class="card-text small text-muted mb-0">
+          The Staff Selection Commission Combined Higher Secondary Level (CHSL) examination is conducted for 
+          recruitment to posts like Lower Division Clerk (LDC), Junior Secretariat Assistant (JSA), 
+          Postal Assistant (PA), Sorting Assistant (SA), and Data Entry Operator (DEO). Our calculator 
+          supports Tier-I Computer Based Examination with subjects including General Intelligence, 
+          Quantitative Aptitude, English Language, and General Awareness.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
       <div class="input-group mb-3">
         <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
         <input type="url" class="form-control" name="ans_key_url" id="ans_key_url" placeholder="https://ssc.digialm.com/ or https://ssccbt.com/...">

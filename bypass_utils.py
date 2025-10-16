@@ -83,37 +83,67 @@ class SSCBypassManager:
         Try alternative methods to access the content
         """
         methods = [
-            self.try_cors_proxy,
+            self.try_allorigins_proxy,
+            self.try_cors_anywhere_proxy,
+            self.try_thingproxy,
             self.try_archive_org,
             self.try_google_cache
         ]
         
         for method in methods:
             try:
+                print(f"🔄 Trying {method.__name__}...")
                 result = method(url)
                 if result and result.status_code == 200:
+                    print(f"✅ Success with {method.__name__}")
                     return result
+                else:
+                    print(f"❌ Failed with {method.__name__}")
             except Exception as e:
-                print(f"Proxy method {method.__name__} failed: {e}")
+                print(f"❌ {method.__name__} error: {e}")
                 continue
         
         return None
     
-    def try_cors_proxy(self, url):
-        """Try accessing through CORS proxy"""
-        proxy_urls = [
-            f"https://cors-anywhere.herokuapp.com/{url}",
-            f"https://api.allorigins.win/get?url={url}",
-        ]
-        
-        for proxy_url in proxy_urls:
-            try:
-                response = self.session.get(proxy_url, timeout=15)
-                if response.status_code == 200:
-                    return response
-            except:
-                continue
-        return None
+    def try_allorigins_proxy(self, url):
+        """Try accessing through allorigins proxy"""
+        proxy_url = f"https://api.allorigins.win/get?url={url}"
+        try:
+            response = self.session.get(proxy_url, timeout=20)
+            if response.status_code == 200:
+                # AllOrigins returns JSON with contents field
+                import json
+                data = response.json()
+                if 'contents' in data:
+                    # Create a mock response object
+                    class MockResponse:
+                        def __init__(self, content):
+                            self.text = content
+                            self.status_code = 200
+                    return MockResponse(data['contents'])
+            return None
+        except:
+            return None
+    
+    def try_cors_anywhere_proxy(self, url):
+        """Try accessing through CORS anywhere proxy"""
+        proxy_url = f"https://cors-anywhere.herokuapp.com/{url}"
+        try:
+            headers = self.session.headers.copy()
+            headers['X-Requested-With'] = 'XMLHttpRequest'
+            response = self.session.get(proxy_url, headers=headers, timeout=15)
+            return response if response.status_code == 200 else None
+        except:
+            return None
+    
+    def try_thingproxy(self, url):
+        """Try accessing through thingproxy"""
+        proxy_url = f"https://thingproxy.freeboard.io/fetch/{url}"
+        try:
+            response = self.session.get(proxy_url, timeout=15)
+            return response if response.status_code == 200 else None
+        except:
+            return None
     
     def try_archive_org(self, url):
         """Try getting from Internet Archive"""
@@ -131,14 +161,22 @@ class SSCBypassManager:
         except:
             return None
     
-    def fetch_with_all_methods(self, url, max_retries=5):
+    def fetch_with_all_methods(self, url, max_retries=3):
         """
-        Comprehensive fetching with all bypass methods
+        Comprehensive fetching with proxy methods prioritized
         """
         print(f"🔄 Attempting to fetch: {url}")
         
-        # Method 1: Direct access with browser simulation
+        # Method 1: Try proxy methods first (most reliable for SSC)
+        print("🌐 Trying proxy methods first...")
+        proxy_response = self.try_proxy_methods(url)
+        if proxy_response and proxy_response.status_code == 200:
+            print("✅ Success: Proxy method")
+            return proxy_response.text
+        
+        # Method 2: Direct access with browser simulation
         try:
+            print("🚀 Trying direct browser simulation...")
             response = self.simulate_browser_navigation(url)
             if response and response.status_code == 200:
                 print("✅ Success: Direct browser simulation")
@@ -146,7 +184,7 @@ class SSCBypassManager:
         except Exception as e:
             print(f"❌ Direct access failed: {e}")
         
-        # Method 2: Multiple user agents with delays
+        # Method 3: Multiple user agents with delays
         user_agents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -175,13 +213,6 @@ class SSCBypassManager:
                     
             except Exception as e:
                 print(f"❌ Attempt {attempt + 1} failed: {e}")
-        
-        # Method 3: Try proxy methods
-        print("🌐 Trying proxy methods...")
-        proxy_response = self.try_proxy_methods(url)
-        if proxy_response and proxy_response.status_code == 200:
-            print("✅ Success: Proxy method")
-            return proxy_response.text
         
         # If all methods fail
         print("❌ All methods exhausted")

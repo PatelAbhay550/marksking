@@ -5,6 +5,15 @@ import argparse
 import time
 import random
 
+# Try to import proxy-only utilities
+try:
+    from proxy_only import make_proxy_only_request
+    PROXY_ONLY_AVAILABLE = True
+    print("✓ Proxy-only utilities loaded")
+except ImportError:
+    PROXY_ONLY_AVAILABLE = False
+    print("⚠️ Proxy-only utilities not available")
+
 # Try to import advanced bypass utilities
 try:
     from bypass_utils import make_advanced_request
@@ -105,10 +114,21 @@ def scrape_answer_key(source, is_file=False):
             return None
     else:
         try:
-            # Try advanced bypass first if available
-            if ADVANCED_BYPASS_AVAILABLE:
-                print("🚀 Using advanced bypass techniques...")
-                html_content = make_advanced_request(source)
+            # Use proxy-only method for maximum reliability
+            if PROXY_ONLY_AVAILABLE:
+                print("🌐 Using proxy-only method...")
+                html_content = make_proxy_only_request(source)
+            elif ADVANCED_BYPASS_AVAILABLE:
+                print("🔄 Using advanced bypass with proxy priority...")
+                from bypass_utils import SSCBypassManager
+                bypass_manager = SSCBypassManager()
+                html_content = bypass_manager.try_proxy_methods(source)
+                if html_content and html_content.status_code == 200:
+                    html_content = html_content.text
+                    print("✅ Success: Proxy method")
+                else:
+                    print("📡 Proxy methods failed, trying advanced bypass...")
+                    html_content = make_advanced_request(source)
             else:
                 print("📡 Using basic bypass method...")
                 html_content = make_request_with_retry(source)
@@ -121,22 +141,71 @@ def scrape_answer_key(source, is_file=False):
 
     soup = BeautifulSoup(html_content, 'html.parser')
 
-    # 1. Extract Candidate Information
+    # 1. Extract Candidate Information with robust parsing
     candidate_info = {}
     try:
+        # Try multiple approaches to find candidate info
         info_table = soup.find('table')
-        cells = info_table.find_all('td')
+        if info_table:
+            cells = info_table.find_all('td')
+            if len(cells) >= 12:
+                # Standard format
+                candidate_info = {
+                    'roll_no': cells[1].text.strip() if len(cells) > 1 else 'N/A',
+                    'cand_name': cells[3].text.strip() if len(cells) > 3 else 'N/A',
+                    'venue_name': cells[5].text.strip() if len(cells) > 5 else 'N/A',
+                    'exam_date': cells[7].text.strip() if len(cells) > 7 else 'N/A',
+                    'exam_time': cells[9].text.strip() if len(cells) > 9 else 'N/A',
+                    'subject': cells[11].text.strip() if len(cells) > 11 else 'N/A'
+                }
+            else:
+                # Alternative parsing - search for labels
+                print("Trying alternative candidate info parsing...")
+                rows = info_table.find_all('tr')
+                for row in rows:
+                    cells = row.find_all('td')
+                    if len(cells) >= 2:
+                        label = cells[0].text.lower().strip()
+                        value = cells[1].text.strip()
+                        if 'roll' in label:
+                            candidate_info['roll_no'] = value
+                        elif 'name' in label:
+                            candidate_info['cand_name'] = value
+                        elif 'venue' in label:
+                            candidate_info['venue_name'] = value
+                        elif 'date' in label:
+                            candidate_info['exam_date'] = value
+                        elif 'time' in label:
+                            candidate_info['exam_time'] = value
+                        elif 'subject' in label:
+                            candidate_info['subject'] = value
+        
+        # If still no info found, set defaults
+        if not candidate_info:
+            candidate_info = {
+                'roll_no': 'Unknown',
+                'cand_name': 'Unknown',
+                'venue_name': 'Unknown',
+                'exam_date': 'Unknown',
+                'exam_time': 'Unknown',
+                'subject': 'SSC MTS'
+            }
+            print("Warning: Could not parse candidate information. Using defaults.")
+        
+        print(f"Candidate info parsed: {candidate_info}")
+        
+    except Exception as e:
+        print(f"Error parsing candidate information: {e}")
+        # Set default values to continue processing
         candidate_info = {
-            'roll_no': cells[1].text.strip(),
-            'cand_name': cells[3].text.strip(),
-            'venue_name': cells[5].text.strip(),
-            'exam_date': cells[7].text.strip(),
-            'exam_time': cells[9].text.strip(),
-            'subject': cells[11].text.strip()
+            'roll_no': 'Unknown',
+            'cand_name': 'Unknown', 
+            'venue_name': 'Unknown',
+            'exam_date': 'Unknown',
+            'exam_time': 'Unknown',
+            'subject': 'SSC MTS'
         }
-    except (AttributeError, IndexError):
-        print("Error: Could not parse candidate information table. The HTML structure might be different.")
-        return None
+        print("Using default candidate information to continue processing.")
 
     # 2. Process Questions and Calculate Score
     all_question_data = {}
