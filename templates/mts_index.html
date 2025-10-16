@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}SSC MTS Score Calculator - MarksKing{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-lg">
+  <div class="card-header bg-success text-white text-center py-3">
+    <h4 class="mb-0">SSC Multi-Tasking Staff (MTS) Answer Key Calculator</h4>
+  </div>
+  <div class="card-body p-4 p-md-5">
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>{{ message }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/mts" enctype="multipart/form-data">
+      
+      <label for="ans_key_url" class="form-label fw-bold">1. Paste Answer Key URL</label>
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+        <input type="url" class="form-control" name="ans_key_url" id="ans_key_url" placeholder="https://ssc.digialm.com/...">
+      </div>
+      
+      <div class="text-center my-3 text-muted fw-bold">OR</div>
+      
+      <label for="ans_key_file" class="form-label fw-bold">2. Upload Answer Key File</label>
+      <div class="input-group mb-4">
+         <span class="input-group-text"><i class="bi bi-file-earmark-arrow-up"></i></span>
+        <input class="form-control" type="file" name="ans_key_file" id="ans_key_file" accept=".html,.htm">
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success btn-lg">
+          <i class="bi bi-calculator-fill me-2"></i>Calculate MTS Score
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
