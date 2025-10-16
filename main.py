@@ -25,11 +25,17 @@ def allowed_file(filename):
 @app.route('/test')
 def test():
     """Simple test route to verify the app is working."""
-    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["MTS: /", "JE: /ssc-je", "CHSL: /chsl"]}
+    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
 
-# --- SSC MTS ROUTE (Root URL) ---
-@app.route('/', methods=['GET', 'POST'])
-def index():
+# --- ROOT ROUTE (Landing Page) ---
+@app.route('/', methods=['GET'])
+def home():
+    """Landing page with links to all calculators."""
+    return render_template('base.html')
+
+# --- SSC MTS ROUTE ---
+@app.route('/mts', methods=['GET', 'POST'])
+def calculate_mts_score():
     try:
         if request.method == 'POST':
             result = None
