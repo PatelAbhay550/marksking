@@ -40,13 +40,13 @@ def allowed_file(filename):
 @app.route('/test')
 def test():
     """Simple test route to verify the app is working."""
-    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
+    return {"status": "success", "message": "Flask app is running on Vercel!", "routes": ["Home: /", "MTS: /mts", "JE: /ssc-je", "CHSL: /chsl"]}
 
 # --- ROOT ROUTE (Landing Page) ---
 @app.route('/', methods=['GET'])
 def home():
     """Landing page with links to all calculators."""
-    return render_template('base.html')
+    return render_template('main_index.html')
 
 # --- SSC MTS ROUTE ---
 @app.route('/mts', methods=['GET', 'POST'])
@@ -89,12 +89,13 @@ def calculate_mts_score():
                 flash('Could not process the MTS answer key. The URL may be invalid or the HTML structure might not be supported.', 'danger')
                 return redirect(request.url)
                 
-        return render_template('index.html')
+        # For GET request, show the MTS form
+        return render_template('mts_index.html')
     except Exception as e:
         print(f"Error in MTS route: {str(e)}")
         print(f"Traceback: {traceback.format_exc()}")
         flash('An error occurred while processing your request.', 'danger')
-        return render_template('index.html')
+        return render_template('mts_index.html')
 
 # --- SSC JE ROUTE (Fixed and Fully Implemented) ---
 @app.route('/ssc-je', methods=['GET', 'POST'])
